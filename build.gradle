@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+}
+
+group 'fr.chess.game'
+version '1.0.0'
+description 'A simple yet optimized chess game built as a university project.'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+}
+
+test {
+    useJUnitPlatform()
+}
