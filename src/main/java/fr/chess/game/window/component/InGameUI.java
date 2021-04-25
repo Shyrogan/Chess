@@ -1,18 +1,30 @@
 package fr.chess.game.window.component;
 
+import fr.chess.game.Game;
 import fr.chess.game.board.Board;
+import fr.chess.game.board.movement.BoardMovement;
 import fr.chess.game.board.piece.Piece;
 import fr.chess.game.board.team.Team;
 import fr.chess.game.math.Position;
 import fr.chess.game.window.resource.ImageManager;
 
+import javax.sound.sampled.Clip;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 import static fr.chess.game.board.Board.SIZE_BOARD;
 import static fr.chess.game.math.Position.pos;
 import static java.lang.Math.min;
 
+/**
+ * Le {@link InGameUI} dessine un échiquier sur la totalité de l'écran, il s'agit de l'écran le plus important du jeu.
+ * Il gère aussi les entrées/sorties du programme durant la phase de jeu.
+ *
+ * 24/04, plus le temps de documenter, il faut speeder donc je verrais si j'ai le temps
+ * de commenter le code, je ferais au mieux.
+ */
 public class InGameUI extends GameComponent {
 
     private final Board board;
@@ -21,11 +33,77 @@ public class InGameUI extends GameComponent {
     public int margeX, margeY;
     /** Quelques dimensions nécessaire pour les maths. **/
     public int tailleEchiquier, tailleCase;
+    /** Le gagnant **/
+    public Team winner;
+
+    public Position selection;
 
     public InGameUI(Board board) {
         this.board = board;
     }
 
+    /**
+     * Gère les entrées liés à la souris sur l'échiquier.
+     *
+     * @param e L'évènement.
+     */
+    @Override
+    public void mousePressed(MouseEvent e) {
+        Position position = new Position((e.getX() - margeX) / tailleCase + 1, (e.getY() - margeY) / tailleCase + 1);
+        if(!position.isInBoard())
+            return;
+
+        // Si on clique pour la première fois sur une case, on selectionne la pièce
+        if(selection == null) {
+            if(board.at(position).isPresent()) {
+                selection = position;
+            } else {
+                selection = null;
+            }
+            repaint();
+            return;
+        }
+        // Si on reclique sur la même, on la déselectionne
+        if(selection.equals(position)) {
+            selection = null;
+            repaint();
+            return;
+        }
+
+        Optional<Piece> optionalPiece = board.at(selection);
+        if(optionalPiece.isEmpty()) {
+            selection = null;
+            repaint();
+            return;
+        }
+
+        if(optionalPiece.get().movements(board).contains(position)) {
+            BoardMovement movement = board.move(selection, position);
+            if(movement.isPossible()) {
+                movement.apply();
+                board.tour++;
+                Game.instance.audioManager.stop();
+                Game.instance.audioManager.play("move_piece.mid", 0);
+            }
+        }
+        selection = null;
+        repaint();
+    }
+
+    /**
+     * Méthode général qui dessine l'échiquier dans la fenêtre.
+     * Il faut noter qu'un "rendu" ne se fait que lorsqu'il est nécessaire. On ne va pas redessiner
+     * l'écran s'il ne se passe rien.
+     * Voici les étapes de rendu:
+     * <ol>
+     *     <li>L'échiquier ainsi que son fond d'écran</li>
+     *     <li>Les logos correspondant aux pièces</li>
+     *     <li>Les mouvements (si une pièce est sélectionnée)</li>
+     *     <li>Les checks (Cas où le roi est échec)</li>
+     * </ol>
+     *
+     * @param graph Java2D
+     */
     @Override
     protected void paintComponent(Graphics graph) {
         super.paintComponent(graph);
@@ -41,6 +119,10 @@ public class InGameUI extends GameComponent {
         drawBoard(g);
         // On dessine les pièces
         drawPieces(g);
+        // On dessine les mouvements
+        drawMovements(g);
+        // On dessine les checks
+        drawChecks(g);
     }
 
     public void drawBoard(Graphics2D g) {
@@ -62,7 +144,7 @@ public class InGameUI extends GameComponent {
         // On dessine l'arrière plan
         for(int yCase = 1; yCase <= SIZE_BOARD; yCase++) {
             for(int xCase = 1; xCase <= SIZE_BOARD; xCase++) {
-                final Position position = getPositionPixels(new Position(xCase, yCase));
+                final Position position = calculatePositionPixels(new Position(xCase, yCase));
                 if((xCase + yCase) % 2 == 1) {
                     g.setColor(new Color(118, 150, 86));
                 } else {
@@ -78,8 +160,38 @@ public class InGameUI extends GameComponent {
         for(Team team: board.teams) {
             for(Piece piece: team.pieces.values()) {
                 BufferedImage image = ImageManager.resource(piece.type.name() + "_" + piece.team.name + ".png");
-                Position position = getPositionPixels(piece.position);
+                Position position = calculatePositionPixels(piece.position);
                 g.drawImage(image, position.x, position.y, tailleCase, tailleCase, null, null);
+            }
+        }
+    }
+
+    public void drawMovements(Graphics2D g) {
+        if(selection != null) {
+            Piece piece = board.at(selection).orElse(null);
+            if(piece == null) return;
+            for(Position move: piece.movements(board)) {
+                Position pixels = calculatePositionPixels(move);
+                g.setColor(new Color(255, 50, 255, 50));
+                g.fillRect(pixels.x, pixels.y, tailleCase, tailleCase);
+            }
+        }
+    }
+
+    public void drawChecks(Graphics2D g) {
+        for(Team team: board.teams) {
+            if(team.isCheck(board)) {
+                if(team.isCheckmate(board)) {
+                    Position pixels = calculatePositionPixels(team.roi().position);
+                    g.setColor(new Color(255, 0, 0, 150));
+                    g.fillRect(pixels.x, pixels.y, tailleCase, tailleCase);
+                    Game.instance.audioManager.stop();
+                    Game.instance.audioManager.play("mat.mid", 0);
+                } else {
+                    Position pixels = calculatePositionPixels(team.roi().position);
+                    g.setColor(new Color(255, 0, 0, 50));
+                    g.fillRect(pixels.x, pixels.y, tailleCase, tailleCase);
+                }
             }
         }
     }
@@ -90,7 +202,7 @@ public class InGameUI extends GameComponent {
      * @param position Position sur l'échiquier
      * @return La position en pixels.
      */
-    public Position getPositionPixels(Position position) {
+    public Position calculatePositionPixels(Position position) {
         return pos(margeX + (position.x - 1) * tailleCase, margeY + (position.y - 1) * tailleCase);
     }
 

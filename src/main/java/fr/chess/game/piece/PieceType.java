@@ -4,8 +4,8 @@ import fr.chess.game.Game;
 import fr.chess.game.board.Board;
 import fr.chess.game.board.team.Team;
 import fr.chess.game.math.Position;
-import fr.chess.game.piece.movement.PathIterator;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -77,6 +77,14 @@ public interface PieceType {
      * @param current La position de départ.
      * @return La {@link Set} des positions.
      */
-    List<PathIterator> mouvements(Board board, Position current, Team team);
+    Set<Position> mouvements(Board board, Position current, Team team);
+
+    /**
+     * Méthode appelée lorsque qu'une pièce de ce type est bougée.
+     *
+     * @param board Board
+     * @param position Position
+     */
+    default void onMove(Board board, Position position, Team team) {}
 
 }

@@ -1,15 +1,15 @@
 package fr.chess.game.piece.impl;
 
 import fr.chess.game.board.Board;
+import fr.chess.game.board.piece.Piece;
 import fr.chess.game.board.team.Team;
 import fr.chess.game.math.Position;
 import fr.chess.game.piece.PieceType;
-import fr.chess.game.piece.movement.PathIterator;
 
-import java.util.List;
+import java.util.*;
 
+import static fr.chess.game.board.Board.SIZE_BOARD;
 import static fr.chess.game.math.Position.pos;
-import static java.util.Collections.emptyList;
 
 public class Tour implements PieceType {
 
@@ -19,25 +19,70 @@ public class Tour implements PieceType {
     }
 
     @Override
-    public List<PathIterator> mouvements(Board board, Position current, Team team) {
-        return List.of(
-                // Droite
-                PathIterator.builder()
-                        .next(p -> pos(p.x + 1, p.y))
-                        .build(),
-                // Haut
-                PathIterator.builder()
-                        .next(p -> pos(p.x, p.y + 1))
-                        .build(),
-                // Gauche
-                PathIterator.builder()
-                        .next(p -> pos(p.x - 1, p.y))
-                        .build(),
-                // Bas
-                PathIterator.builder()
-                        .next(p -> pos(p.x, p.y - 1))
-                        .build()
-        );
+    public Set<Position> mouvements(Board board, Position current, Team team) {
+        Set<Position> result = new HashSet<>();
+
+        for(int x = current.x - 1; x >= 1; x--) {
+            Position move = pos(x, current.y);
+            if(!move.isInBoard()) {
+                break;
+            }
+            Optional<Piece> piece = board.at(move);
+            if(piece.isPresent()) {
+                if(piece.get().isEnemy(team))
+                    result.add(move);
+                break;
+            } else {
+                result.add(move);
+            }
+        }
+
+        for(int x = current.x + 1; x <= SIZE_BOARD; x++) {
+            Position move = pos(x, current.y);
+            if(!move.isInBoard()) {
+                break;
+            }
+            Optional<Piece> piece = board.at(move);
+            if(piece.isPresent()) {
+                if(piece.get().isEnemy(team))
+                    result.add(move);
+                break;
+            } else {
+                result.add(move);
+            }
+        }
+
+        for(int y = current.y - 1; y >= 1; y--) {
+            Position move = pos(current.x, y);
+            if(!move.isInBoard()) {
+                break;
+            }
+            Optional<Piece> piece = board.at(move);
+            if(piece.isPresent()) {
+                if(piece.get().isEnemy(team))
+                    result.add(move);
+                break;
+            } else {
+                result.add(move);
+            }
+        }
+
+        for(int y = current.y + 1; y <= SIZE_BOARD; y++) {
+            Position move = pos(current.x, y);
+            if(!move.isInBoard()) {
+                break;
+            }
+            Optional<Piece> piece = board.at(move);
+            if(piece.isPresent()) {
+                if(piece.get().isEnemy(team))
+                    result.add(move);
+                break;
+            } else {
+                result.add(move);
+            }
+        }
+
+        return result;
     }
 
 }

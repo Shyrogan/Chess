@@ -1,5 +1,6 @@
 package fr.chess.game;
 
+import fr.chess.game.window.audio.AudioManager;
 import fr.chess.game.board.Board;
 import fr.chess.game.piece.PieceRegistry;
 import fr.chess.game.window.Window;
@@ -15,6 +16,9 @@ public class Game {
 
     /** Le registre des pièces **/
     public final PieceRegistry pieceRegistry = new PieceRegistry();
+
+    /** Le gestionnaire de l'audio **/
+    public final AudioManager audioManager = new AudioManager();
 
     /** L'échiquier **/
     public Board board;

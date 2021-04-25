@@ -1,6 +1,10 @@
 package fr.chess.game.math;
 
+import java.util.Objects;
+
 import static fr.chess.game.board.Board.SIZE_BOARD;
+import static java.lang.Math.PI;
+import static java.lang.Math.atan2;
 
 /**
  * Cet objet sert à stocker les informations à propos d'une position (généralement sur l'échiquier).
@@ -61,4 +65,37 @@ public class Position {
         return x >= 1 && x <= SIZE_BOARD && y >= 1 && y <= SIZE_BOARD;
     }
 
+    /**
+     * Retourne l'angle entre deux positions.
+     *
+     * @param autre Autre position
+     * @return L'angle
+     */
+    public double angle(Position autre) {
+        double theta = atan2(autre.x - x, autre.y - y);
+        if(theta < 0.0)
+            theta += PI + PI;
+        return theta;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Position position = (Position) o;
+        return x == position.x && y == position.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
+
+    @Override
+    public String toString() {
+        return "Position{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

@@ -4,7 +4,6 @@ import fr.chess.game.window.component.GameComponent;
 import fr.chess.game.window.component.MainMenuUI;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class Window extends JFrame {
 

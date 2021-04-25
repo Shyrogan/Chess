@@ -3,34 +3,20 @@ package fr.chess.game.window.component;
 import fr.chess.game.Game;
 import fr.chess.game.board.Board;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
-import java.net.URL;
 
 public class MainMenuUI extends GameComponent {
 
-    private Clip clip;
-
     public MainMenuUI() {
         super();
-        URL url = getClass().getResource("/audio/clair_de_lune.mid");
-        try {
-            clip = AudioSystem.getClip();
-            AudioInputStream ais = AudioSystem.getAudioInputStream(url);
-            clip.open(ais);
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        Game.instance.audioManager.playDefault();
 
         // La qualité avant tout!
         Graphics2D g2d = (Graphics2D) g;
@@ -72,7 +58,7 @@ public class MainMenuUI extends GameComponent {
         int height = bHeight * 2;
 
         if(e.getX() >= x && e.getX() <= (x + width) && e.getY() >= y && e.getY() <= (y + height)) {
-            clip.stop();
+            Game.instance.audioManager.stop();
             Game.instance.window.setComponent(new InGameUI(new Board()));
         }
     }

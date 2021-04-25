@@ -4,15 +4,11 @@ import fr.chess.game.board.Board;
 import fr.chess.game.board.team.Team;
 import fr.chess.game.math.Position;
 import fr.chess.game.piece.PieceType;
-import fr.chess.game.piece.movement.PathIterator;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
-import static fr.chess.game.math.Position.pos;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptySet;
+import static fr.chess.game.piece.PieceType.fou;
+import static fr.chess.game.piece.PieceType.tour;
 
 public class Dame implements PieceType {
 
@@ -22,35 +18,13 @@ public class Dame implements PieceType {
     }
 
     @Override
-    public List<PathIterator> mouvements(Board board, Position current, Team team) {
-        return List.of(
-                // Fou
-                PathIterator.builder()
-                        .next(p -> pos(p.x + 1, p.y + 1))
-                        .build(),
-                PathIterator.builder()
-                        .next(p -> pos(p.x - 1, p.y + 1))
-                        .build(),
-                PathIterator.builder()
-                        .next(p -> pos(p.x + 1, p.y - 1))
-                        .build(),
-                PathIterator.builder()
-                        .next(p -> pos(p.x - 1, p.y - 1))
-                        .build(),
-                // Tour
-                PathIterator.builder()
-                        .next(p -> pos(p.x + 1, p.y))
-                        .build(),
-                PathIterator.builder()
-                        .next(p -> pos(p.x, p.y + 1))
-                        .build(),
-                PathIterator.builder()
-                        .next(p -> pos(p.x - 1, p.y))
-                        .build(),
-                PathIterator.builder()
-                        .next(p -> pos(p.x, p.y - 1))
-                        .build()
-        );
+    public Set<Position> mouvements(Board board, Position current, Team team) {
+        Set<Position> fou = fou().mouvements(board, current, team);
+        Set<Position> tour = tour().mouvements(board, current, team);
+
+        fou.addAll(tour);
+
+        return fou;
     }
 
 }

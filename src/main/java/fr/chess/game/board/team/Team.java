@@ -1,8 +1,10 @@
 package fr.chess.game.board.team;
 
+import fr.chess.game.board.Board;
 import fr.chess.game.board.piece.Piece;
 import fr.chess.game.math.Position;
 import fr.chess.game.piece.PieceType;
+import fr.chess.game.piece.impl.Roi;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,13 +28,44 @@ public class Team {
     }
 
     /**
+     * Raccourcis pour appeler la fonction {@link Roi#isCheck(Board, Position, Team)}
+     *
+     * @param board Echiquier
+     * @return Si la team est en échec.
+     */
+    public boolean isCheck(Board board) {
+        Piece roi = roi();
+        return ((Roi)PieceType.roi()).isCheck(board, roi.position, roi.team);
+    }
+
+    /**
+     * Raccourcis pour appeler la fonction {@link Roi#isCheckmate(Board, Position, Team)}
+     *
+     * @param board Echiquier
+     * @return Si la team est en échec et mat.
+     */
+    public boolean isCheckmate(Board board) {
+        Piece roi = roi();
+        return ((Roi)PieceType.roi()).isCheckmate(board, roi.position, roi.team);
+    }
+
+    /**
+     * @return La pièce correspondant au {@link Roi} de l'équipe.
+     */
+    public Piece roi() {
+        return pieces.values().stream()
+                .filter(p -> p.type.name().equalsIgnoreCase("roi"))
+                .findFirst().orElse(null);
+    }
+
+    /**
      * Ajoute une pièce à la liste des pièces de l'équipe.
      *
      * @param position Position
      * @param type Type
      * @return La team.
      */
-    public Team addPiece(Position position, PieceType type) {
+    public Team piece(Position position, PieceType type) {
         pieces.put(position, new Piece(this, position, type));
         return this;
     }
@@ -45,7 +78,7 @@ public class Team {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Team team = (Team) o;
-        return Objects.equals(name, team.name) && Objects.equals(pieces, team.pieces);
+        return Objects.equals(name, team.name);
     }
 
     /**
@@ -56,12 +89,11 @@ public class Team {
         return Objects.hash(name, pieces);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
-        return "Team{" +
-                "name='" + name + '\'' +
-                ", direction=" + direction +
-                ", pieces=" + pieces +
-                '}';
+        return "Team{" + "name='" + name + "'}";
     }
 }
