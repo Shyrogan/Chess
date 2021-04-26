@@ -5,8 +5,6 @@ import fr.chess.game.board.Board;
 import fr.chess.game.board.team.Team;
 import fr.chess.game.math.Position;
 
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 public interface PieceType {

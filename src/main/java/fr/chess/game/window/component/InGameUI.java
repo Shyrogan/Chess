@@ -8,11 +8,14 @@ import fr.chess.game.board.team.Team;
 import fr.chess.game.math.Position;
 import fr.chess.game.window.resource.ImageManager;
 
-import javax.sound.sampled.Clip;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static fr.chess.game.board.Board.SIZE_BOARD;
 import static fr.chess.game.math.Position.pos;
@@ -34,7 +37,7 @@ public class InGameUI extends GameComponent {
     /** Quelques dimensions nécessaire pour les maths. **/
     public int tailleEchiquier, tailleCase;
     /** Le gagnant **/
-    public Team winner;
+    public List<Team> winner;
 
     public Position selection;
 
@@ -49,7 +52,10 @@ public class InGameUI extends GameComponent {
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        Position position = new Position((e.getX() - margeX) / tailleCase + 1, (e.getY() - margeY) / tailleCase + 1);
+        final Position position = new Position(
+                (e.getX() - margeX) / tailleCase + 1,
+                (e.getY() - 40 - margeY) / tailleCase + 1
+        );
         if(!position.isInBoard())
             return;
 
@@ -123,6 +129,8 @@ public class InGameUI extends GameComponent {
         drawMovements(g);
         // On dessine les checks
         drawChecks(g);
+        // Le gagnant
+        drawWinner(g);
     }
 
     public void drawBoard(Graphics2D g) {
@@ -133,10 +141,10 @@ public class InGameUI extends GameComponent {
         // On veut un carré qui prend un maximum
         tailleEchiquier = min(g.getClipBounds().height, g.getClipBounds().width);
         margeX = g.getClipBounds().height == tailleEchiquier
-                ? g.getClipBounds().width / 2 - tailleEchiquier / 2
+                ? (g.getClipBounds().width - tailleEchiquier) / 2
                 : 0;
         margeY = g.getClipBounds().width == tailleEchiquier
-                ? g.getClipBounds().height / 2 - tailleEchiquier / 2
+                ? (g.getClipBounds().height - tailleEchiquier) / 2
                 : 0;
         // On divise par le nombre de case pour obtenir la taille par case.
         tailleCase = tailleEchiquier / SIZE_BOARD;
@@ -187,12 +195,35 @@ public class InGameUI extends GameComponent {
                     g.fillRect(pixels.x, pixels.y, tailleCase, tailleCase);
                     Game.instance.audioManager.stop();
                     Game.instance.audioManager.play("mat.mid", 0);
+                    winner = new LinkedList<>(board.teams);
+                    winner.remove(team);
                 } else {
                     Position pixels = calculatePositionPixels(team.roi().position);
                     g.setColor(new Color(255, 0, 0, 50));
                     g.fillRect(pixels.x, pixels.y, tailleCase, tailleCase);
                 }
             }
+        }
+    }
+
+    public void drawWinner(Graphics2D g) {
+        if(winner != null && !winner.isEmpty()) {
+            int middleX = g.getClipBounds().width  / 2;
+            int middleY = g.getClipBounds().height / 2;
+            int size = tailleEchiquier / 4;
+            g.setColor(new Color(50, 50, 50));
+            g.fillRect(middleX - size - 2, middleY - size - 2, size * 2 + 4, size * 2 + 4);
+            g.setColor(new Color(238, 238, 210));
+            g.fillRect(middleX - size, middleY - size, size * 2, size * 2);
+
+            String text = winner.stream()
+                    .map(t -> t.name)
+                    .collect(Collectors.joining(", ")) + " a gagné!";
+            Rectangle2D centerText = g.getFontMetrics().getStringBounds(text, g);
+            g.setFont(g.getFont().deriveFont(24F));
+
+            g.setColor(Color.BLACK);
+            g.drawString(text, middleX - (int)centerText.getWidth() / 2 - 40, middleY);
         }
     }
 
