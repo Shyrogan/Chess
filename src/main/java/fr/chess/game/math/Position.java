@@ -40,6 +40,8 @@ public class Position {
     }
 
     /**
+     * Calcul dans distance au carré entre deux positions.
+     *
      * @param other L'autre position.
      * @return La distance entre les deux points (au carré).
      */
@@ -51,6 +53,9 @@ public class Position {
     }
 
     /**
+     * Ajoute la position indiquée à celle-ci.
+     * Cette méthode retourne recrée une {@link Position}.
+     *
      * @param other The other position.
      * @return This position with the other position added to it.
      */
@@ -59,6 +64,8 @@ public class Position {
     }
 
     /**
+     * Vérifie si la position est contenue dans l'échiquier.
+     *
      * @return {@code true} si cette position est sur l'échiquier, {@code false} sinon.
      */
     public boolean isInBoard() {
@@ -78,6 +85,12 @@ public class Position {
         return theta;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param o L'objet
+     * @return S'il est égale à celui-ci
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -86,11 +99,21 @@ public class Position {
         return x == position.x && y == position.y;
     }
 
+    /**
+     * Le hash utilisée par les {@link java.util.Map} et {@link java.util.Set}.
+     *
+     * @return Le hash.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(x, y);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return Le texte.
+     */
     @Override
     public String toString() {
         return "Position{" +

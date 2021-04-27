@@ -6,6 +6,7 @@ import fr.chess.game.board.team.Team;
 import fr.chess.game.board.team.Teams;
 import fr.chess.game.math.Position;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,10 +39,10 @@ public class Board {
      * Ses équipes son générées par la classe {@link Teams}
      */
     public Board() {
-         teams = List.of(
+         teams = Arrays.asList(
                  Teams.createWhite(),
                  Teams.createBlack()
-        );
+         );
     }
 
     /**

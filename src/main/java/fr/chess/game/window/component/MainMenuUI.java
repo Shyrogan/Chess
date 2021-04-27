@@ -7,12 +7,18 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 
+/**
+ * Le menu principal, il ne contient qu'un bouton néanmoins il pourrait être agrandi si nous avons le temps.
+ */
 public class MainMenuUI extends GameComponent {
 
     public MainMenuUI() {
         super();
     }
 
+    /**
+     * Dessine le menu principal.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

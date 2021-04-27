@@ -7,6 +7,9 @@ import fr.chess.game.math.Position;
 
 import java.util.Set;
 
+/**
+ * Interface représentant un type de pièce de manière général.
+ */
 public interface PieceType {
 
     /**
@@ -72,7 +75,10 @@ public interface PieceType {
      * Retourne une {@link Set} des mouvements possible afin qu'ils puissent-être
      * analysés.
      *
-     * @param current La position de départ.
+     * @param board L'échiquier
+     * @param current La position de départ
+     * @param team L'équipe
+     *
      * @return La {@link Set} des positions.
      */
     Set<Position> mouvements(Board board, Position current, Team team);
@@ -82,6 +88,7 @@ public interface PieceType {
      *
      * @param board Board
      * @param position Position
+     * @param team L'équipe de la pièce.
      */
     default void onMove(Board board, Position position, Team team) {}
 

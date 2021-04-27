@@ -59,6 +59,8 @@ public class BoardMovement {
 
     /**
      * Applique le mouvement dans l'échiquier.
+     *
+     * @return Le {@link BoardMovement}
      */
     public BoardMovement apply() {
         board.set(from, null);
@@ -70,6 +72,8 @@ public class BoardMovement {
 
     /**
      * Annule le mouvement dans l'échiquier.
+     *
+     * @return Le {@link BoardMovement}
      */
     public BoardMovement undo() {
         board.set(from, fromPiece);

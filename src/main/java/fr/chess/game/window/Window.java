@@ -5,6 +5,9 @@ import fr.chess.game.window.component.MainMenuUI;
 
 import javax.swing.*;
 
+/**
+ * Représente la fenêtre du jeu et permet d'opérer sur celle-ci.
+ */
 public class Window extends JFrame {
 
     /** Ce qui est affiché à l'écran actuellement. **/

@@ -29,9 +29,9 @@ public class Pion implements PieceType {
         Set<Position> result = new HashSet<>();
         Position move = pos(current.x, current.y + team.direction.y);
 
-        if(board.at(move).isEmpty()) {
+        if(!board.at(move).isPresent()) {
             result.add(move);
-            if(extended && board.at(pos(move.x, move.y + team.direction.y)).isEmpty())
+            if(extended && !board.at(pos(move.x, move.y + team.direction.y)).isPresent())
                 result.add(pos(move.x, move.y + team.direction.y));
         }
 

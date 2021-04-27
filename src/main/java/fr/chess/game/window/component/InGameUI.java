@@ -24,9 +24,6 @@ import static java.lang.Math.min;
 /**
  * Le {@link InGameUI} dessine un échiquier sur la totalité de l'écran, il s'agit de l'écran le plus important du jeu.
  * Il gère aussi les entrées/sorties du programme durant la phase de jeu.
- *
- * 24/04, plus le temps de documenter, il faut speeder donc je verrais si j'ai le temps
- * de commenter le code, je ferais au mieux.
  */
 public class InGameUI extends GameComponent {
 
@@ -77,7 +74,7 @@ public class InGameUI extends GameComponent {
         }
 
         Optional<Piece> optionalPiece = board.at(selection);
-        if(optionalPiece.isEmpty()) {
+        if(!optionalPiece.isPresent()) {
             selection = null;
             repaint();
             return;

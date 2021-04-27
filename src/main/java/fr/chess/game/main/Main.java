@@ -5,6 +5,10 @@ import fr.chess.game.Game;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * L'entrée du programme ce fait par cette classe,
+ * je souhtais séparer le main du reste.
+ */
 public class Main {
 
     /**

@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Le ressource manager est un peu complexe mais en gros il permet d'éviter
+ * Le {@link ImageManager} est un peu complexe mais en gros il permet d'éviter
  * de charger deux fois une même image.
  */
 public class ImageManager {

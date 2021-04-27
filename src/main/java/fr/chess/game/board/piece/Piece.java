@@ -34,6 +34,8 @@ public class Piece {
     }
 
     /**
+     * Vérifie si la pièce indiquée est ennemie avec celle-ci.
+     *
      * @param other L'autre pièce.
      * @return {@code true} si la pièce indiquée n'est pas dans la même équipe, false sinon.
      */
@@ -42,6 +44,8 @@ public class Piece {
     }
 
     /**
+     * Vérifie si la team indiquée est ennemie avec celle de cette pièce.
+     *
      * @param other L'autre team.
      * @return {@code true} si la pièce indiquée n'est pas dans la même équipe, false sinon.
      */
